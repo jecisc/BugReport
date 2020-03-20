@@ -10,7 +10,7 @@ Examples
 	[ (Set withAll: #(1 2 3 4)) first ]
 		on: Error
 		do: [ :ex |
-			BugReporter new
+			FileBugReporter new
 				context: thisContext;
 				description: ex description;
 				file: 'report.txt' asFileReference;
@@ -19,7 +19,7 @@ Examples
 				
 	[ (Set withAll: #(1 2 3 4)) first ]
 		on: Error
-		do: [ :ex |ex dumpStackFor: thisContext ]
+		do: [ :ex | ex dumpStackFor: thisContext ]
  
 Internal Representation and Key Implementation Points.
 --------------------
