@@ -62,8 +62,8 @@ FileBugReporter >> export [
 						nextPutAll: DateAndTime now printString;
 						nextPutAll: ' Error while dumping the stack: ';
 						nextPutAll: ex description.
-					('Error while dumping the stack: ' , ex description) record.
-					ex signalerContext longStack record ].
+					self record: 'Error while dumping the stack: ' , ex description.
+					self record: ex signalerContext longStack ].
 			stream := nil ]
 ]
 
@@ -75,4 +75,13 @@ FileBugReporter >> file [
 { #category : #accessing }
 FileBugReporter >> file: anObject [
 	file := anObject
+]
+
+{ #category : #logging }
+FileBugReporter >> record: aString [
+	"Make TinyLogger an optional dependancy. We can do better later but for now it will do."
+
+	(self class environment hasClassNamed: #TinyLogger)
+		ifTrue: [ aString record ]
+		ifFalse: [ self traceCr: aString ]
 ]

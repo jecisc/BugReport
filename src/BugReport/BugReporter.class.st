@@ -37,7 +37,6 @@ Class {
 	#instVars : [
 		'description',
 		'stream',
-		'originalContext',
 		'currentContext'
 	],
 	#category : #BugReport
@@ -78,6 +77,19 @@ BugReporter >> moveToContextRaising: anError [
 ]
 
 { #category : #writing }
+BugReporter >> moveToFirstInterestingContext [
+	| error |
+	self moveUpWhileReceiverIsNotAnException.
+
+	error := currentContext ifNotNil: #receiver.
+
+	"Make stack more readable by removing the traces in the error raised."
+	self moveUpWhileReceiverIs: error.
+
+	(self description beginsWith: 'MNU') ifFalse: [ self moveToContextRaising: error ] ifTrue: [ self movePastMessageNotUnderstood ]
+]
+
+{ #category : #writing }
 BugReporter >> moveUp [
 	currentContext := currentContext sender
 ]
@@ -88,8 +100,8 @@ BugReporter >> moveUpWhileReceiverIs: anObject [
 ]
 
 { #category : #writing }
-BugReporter >> moveUpWhileReceiverIsException [
-	"Making the stack more readable by remnoving the traces located in the exceptions."
+BugReporter >> moveUpWhileReceiverIsNotAnException [
+	"Making the stack more readable by removing the traces of the code managing the error handling by skipping to the first exception context."
 
 	[ currentContext isNil or: [ currentContext receiver isException ] ] whileFalse: [ self moveUp ]
 ]
@@ -120,20 +132,15 @@ BugReporter >> stream: anObject [
 
 { #category : #writing }
 BugReporter >> write [
-	| error |
+	"Make stack more readable by removing the traces in the error raised."
+
 	self assert: stream isNotNil.
 	self writeDescription.
 
 	currentContext ifNil: [ ^ self ].
 
-	self moveUpWhileReceiverIsException.
-
-	error := currentContext ifNotNil: #receiver.
-
-	"Make stack more readable by removing the traces in the error raised."
-	self moveUpWhileReceiverIs: error.
-
-	(self description beginsWith: 'MNU') ifFalse: [ self moveToContextRaising: error ] ifTrue: [ self movePastMessageNotUnderstood ].
+	"We want to skip everything related to the error handling to print only from the origin of the error in the code."
+	self moveToFirstInterestingContext.
 
 	[ currentContext isNil ]
 		whileFalse: [ self writeCurrentContext.

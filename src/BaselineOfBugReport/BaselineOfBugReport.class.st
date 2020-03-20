@@ -12,16 +12,15 @@ BaselineOfBugReport >> baseline: spec [
 	<baseline>
 	spec
 		for: #common
-		do: [
-			"Packages"
+		do: [ "Packages"
 			spec
-				package: 'BugReport'";
-				package: 'BugReport-Tests' with: [ spec requires: #('BugReport') ]".
+				package: 'BugReport';
+				package: 'BugReport-Tests' with: [ spec requires: #('BugReport') ].
 
 			"Groups"
-"			spec
+			spec
 				group: 'Core' with: #('BugReport');
-				group: 'Tests' with: #('BugReport-Tests')" ].
+				group: 'Tests' with: #('BugReport-Tests') ]
 ]
 
 { #category : #accessing }
