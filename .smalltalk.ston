@@ -1,7 +1,7 @@
 SmalltalkCISpec {
   #loading : [
     SCIMetacelloLoadSpec {
-      #baseline : 'BugReporter',
+      #baseline : 'BugReport',
       #directory : 'src'
     }
   ]
